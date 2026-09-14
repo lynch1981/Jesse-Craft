@@ -5,10 +5,10 @@ const gl=canvas.getContext('webgl',{antialias:true,alpha:false});
 if(!gl){$('error').hidden=false;$('error').textContent='This 3D game needs WebGL. Enable hardware acceleration or open it in another browser.';return}
 const {Game,SIZE,HEIGHT,BLOCKS,ITEMS}=BlockMeadow3D;
 const game=new Game(),SAVE='block-meadow-3d-v1';
-const names={staff:'Magic staff',portal:'Portal',dragon_spawn_egg:'Dragon egg',herobrine_axe:'Herobrine axe',gun:'Gun',bomb:'Bomb',ice_boomerang:'Ice boomerang',sword:'Sword',herobrine:'Herobrine',bow:'Bow',hand:'Mine'};
-const symbols={staff:'✦',portal:'◉',dragon_spawn_egg:'◈',herobrine_axe:'⚒',gun:'▰',bomb:'●',ice_boomerang:'❄',sword:'⚔',herobrine:'◌',bow:'➶',hand:'⛏'};
-const tints={staff:'#bb9bff',portal:'#bd7dff',dragon_spawn_egg:'#a9dc8b',herobrine_axe:'#fff',gun:'#aebecd',bomb:'#f6b274',ice_boomerang:'#a8f1ff'};
-const descriptions={staff:'Fire a magic bolt · 30 damage',portal:'Create a gateway · Walk through to travel',dragon_spawn_egg:'Summon a dragon · 6,666,666,666,666 HP',herobrine_axe:'White laser · 99 damage',gun:'Aim and fire · Unlimited ammo',bomb:'Throw · 1.2-second fuse · 24 blast damage',ice_boomerang:'Throw and return · Freezes enemies for 3 seconds',sword:'Swing at nearby creatures',herobrine:'Summon Herobrine',bow:'Shoot an arrow',hand:'Left click mine · Right click build'};
+const names={obliterator:'One-hit Obliterator',staff:'Magic staff',portal:'Portal',dragon_spawn_egg:'Dragon egg',herobrine_axe:'Herobrine axe',gun:'Gun',bomb:'Bomb',ice_boomerang:'Ice boomerang',sword:'Sword',herobrine:'Herobrine',bow:'Bow',hand:'Mine'};
+const symbols={obliterator:'✹',staff:'✦',portal:'◉',dragon_spawn_egg:'◈',herobrine_axe:'⚒',gun:'▰',bomb:'●',ice_boomerang:'❄',sword:'⚔',herobrine:'◌',bow:'➶',hand:'⛏'};
+const tints={obliterator:'#ff4fa6',staff:'#bb9bff',portal:'#bd7dff',dragon_spawn_egg:'#a9dc8b',herobrine_axe:'#fff',gun:'#aebecd',bomb:'#f6b274',ice_boomerang:'#a8f1ff'};
+const descriptions={obliterator:'Aim and fire · Defeat any creature in one hit',staff:'Fire a magic bolt · 30 damage',portal:'Create a gateway · Walk through to travel',dragon_spawn_egg:'Summon a dragon · 5,555 HP',herobrine_axe:'White laser · 99 damage',gun:'Aim and fire · Unlimited ammo',bomb:'Throw · 1.2-second fuse · 24 blast damage',ice_boomerang:'Throw and return · Freezes enemies for 3 seconds',sword:'Swing at nearby creatures',herobrine:'Summon Herobrine',bow:'Shoot an arrow',hand:'Left click mine · Right click build'};
 const palette=[[0,0,0],[.40,.64,.29],[.49,.32,.21],[.43,.48,.53],[.41,.27,.16],[.23,.49,.28],[.82,.74,.48],[.56,.83,.87],[.65,.34,.29],[.87,.68,.24]];
 function notify(text){$('notice').textContent=text;noticeUntil=performance.now()+5500}
 let noticeUntil=0;
@@ -207,7 +207,7 @@ $('play').onclick=start;$('resume').onclick=start;
 $('save').onclick=()=>save();$('commands').onclick=openCommands;
 $('help').onclick=()=>{unlock();paused=true;$('welcome').showModal()};
 $('closeCommands').onclick=()=>{$('commandDialog').close();start()};
-const examples=['/give staff','/give portal','/give dragon_spawn_egg','/give herobrine_axe','/give bomb','/give ice_boomerang','/give gold 64','/summon pig','/summon dragon','/summon herobrine','/gamemode creative','/gamemode survival','/gamemode spectator','/fly','/heal','/time set night','/time set day','/gamerule doDaylightCycle false','/tp ~ ~3 ~','/setblock ~3 ~ ~ stone','/kill @e','/clear','/save','/load'];
+const examples=['/give obliterator','/give staff','/give portal','/give dragon_spawn_egg','/give herobrine_axe','/give bomb','/give ice_boomerang','/give gold 64','/summon pig','/summon dragon','/summon herobrine','/gamemode creative','/gamemode survival','/gamemode spectator','/fly','/heal','/time set night','/time set day','/gamerule doDaylightCycle false','/tp ~ ~3 ~','/setblock ~3 ~ ~ stone','/kill @e','/clear','/save','/load'];
 for(const text of examples){const b=document.createElement('button');b.textContent=text;b.onclick=()=>{$('command').value=text;$('command').focus()};$('examples').append(b)}
 $('commandForm').onsubmit=e=>{
  e.preventDefault();const text=$('command').value.trim();

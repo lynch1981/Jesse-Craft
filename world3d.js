@@ -1,9 +1,9 @@
 'use strict';
 // Simulation is independent of the browser so combat and travel can be checked directly.
 (function(root){
-const SIZE=48, HEIGHT=28, DRAGON_HP=6666666666666;
+const SIZE=48, HEIGHT=28, DRAGON_HP=5555;
 const BLOCKS=['air','grass','dirt','stone','wood','leaves','sand','glass','brick','gold'];
-const ITEMS=['staff','portal','dragon_spawn_egg','herobrine_axe','gun','bomb','ice_boomerang','sword','herobrine','bow','hand',...BLOCKS.slice(1)];
+const ITEMS=['obliterator','staff','portal','dragon_spawn_egg','herobrine_axe','gun','bomb','ice_boomerang','sword','herobrine','bow','hand',...BLOCKS.slice(1)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);
 function terrain(x,z){return 6+Math.floor(Math.sin(x*.18)*1.5+Math.cos(z*.23)*1.5)}
@@ -26,7 +26,7 @@ class Game {
  constructor(){
   this.realms=[realm(0),realm(1)];this.realm=0;
   this.player={x:24.5,y:terrain(24,24)+1.02,z:24.5,vy:0,yaw:0,pitch:-.12};
-  this.mode='creative';this.flying=false;this.health=20;this.item='staff';this.block=1;
+  this.mode='creative';this.flying=false;this.health=20;this.item='obliterator';this.block=1;
   this.inventory=Array(10).fill(0);this.time=6000;this.dayCycle=true;
   this.shots=[];this.effects=[];this.cooldown=0;this.hurt=0;this.portalCooldown=0;this.spawnClock=0;this.elapsed=0;this.nextId=1;
   this.message=()=>{};
@@ -92,15 +92,15 @@ class Game {
   if(item==='portal'){this.placePortal();this.cooldown=.6;return}
   if(item==='dragon_spawn_egg'||item==='herobrine'){
    const x=clamp(this.player.x+d.x*7,3,SIZE-4),z=clamp(this.player.z+d.z*7,3,SIZE-4),y=item==='dragon_spawn_egg'?Math.max(this.floor(x,z)+4,11):this.floor(x,z);
-   try{const e=this.spawn(item==='dragon_spawn_egg'?'dragon':'herobrine',x,y,z);if(item==='dragon_spawn_egg')this.player.pitch=Math.atan2(e.y+1-this.eye().y,Math.hypot(e.x-this.player.x,e.z-this.player.z));this.message(item==='dragon_spawn_egg'?'Dragon summoned · 6,666,666,666,666 HP':'Herobrine summoned!')}catch(e){this.message(e.message)}
+   try{const e=this.spawn(item==='dragon_spawn_egg'?'dragon':'herobrine',x,y,z);if(item==='dragon_spawn_egg')this.player.pitch=Math.atan2(e.y+1-this.eye().y,Math.hypot(e.x-this.player.x,e.z-this.player.z));this.message(item==='dragon_spawn_egg'?'Dragon summoned · 5,555 HP':'Herobrine summoned!')}catch(e){this.message(e.message)}
    this.cooldown=.7;return;
   }
   if(item==='ice_boomerang'&&this.shots.some(s=>s.kind===item))return;
   this.cooldown=item==='gun'?.18:item==='staff'?.35:.65;
-  if(['herobrine_axe','gun','bow','sword'].includes(item)){
+  if(['obliterator','herobrine_axe','gun','bow','sword'].includes(item)){
    const h=this.trace(o,d,item==='sword'?3:35,true),damage={herobrine_axe:99,gun:12,bow:8,sword:6}[item];
-   if(h.entity)h.entity.hp-=damage;
-   this.effects.push({kind:'beam',a:o,b:h.point,color:item==='herobrine_axe'?[1,1,1]:item==='sword'?[.8,.9,1]:[1,.85,.3],life:.16});
+   if(h.entity)h.entity.hp=item==='obliterator'?0:h.entity.hp-damage;
+   this.effects.push({kind:'beam',a:o,b:h.point,color:item==='obliterator'?[1,.15,.65]:item==='herobrine_axe'?[1,1,1]:item==='sword'?[.8,.9,1]:[1,.85,.3],life:.16});
    this.cleanup();return;
   }
   const speed=item==='bomb'?12:item==='staff'?22:16;
@@ -195,6 +195,7 @@ class Game {
    if(!Array.isArray(r.blocks)||r.blocks.length!==SIZE*SIZE*HEIGHT||!r.blocks.every(b=>Number.isInteger(b)&&b>=0&&b<BLOCKS.length)||!Array.isArray(r.entities)||r.entities.length>40||!r.entities.every(e=>['x','y','z','hp','maxHp','id','phase','frozen'].every(k=>Number.isFinite(e[k]))&&e.hp>0)||!Array.isArray(r.portals)||r.portals.length>1||!r.portals.every(p=>['x','y','z'].every(k=>Number.isFinite(p[k]))))throw Error('Invalid world data.');
   }
   if(!Array.isArray(d.inventory)||d.inventory.length!==10||!d.inventory.every(n=>Number.isInteger(n)&&n>=0)||!Number.isInteger(d.block)||d.block<1||d.block>9||!Number.isFinite(d.health)||d.health<=0||!Number.isFinite(d.time)||!Number.isSafeInteger(d.nextId))throw Error('Invalid player data.');
+  for(const r of d.realms)for(const e of r.entities)if(e.type==='dragon'){e.maxHp=DRAGON_HP;e.hp=Math.min(e.hp,DRAGON_HP)}
   this.realms=d.realms.map(r=>({...r,blocks:Uint8Array.from(r.blocks),revision:r.revision+1}));
   for(const k of ['realm','player','mode','flying','health','item','block','inventory','time','dayCycle','nextId'])this[k]=d[k];
   this.shots=[];this.effects=[];this.cooldown=0;this.portalCooldown=2;

@@ -7,14 +7,16 @@ A first-person 3D voxel sandbox with mining, building, flight, two linked realms
 - WASD / arrow keys: move. Mouse: look. Space: jump.
 - Click **Enter the meadow** to capture the mouse; Esc releases it. If mouse capture is unavailable, drag to look and click Use / Fire.
 - Left click: use your selected item. Select **Mine** to dig. Select a block to place it; right click builds with your last selected block.
-- 1–9: staff, portal, dragon egg, Herobrine axe, gun, bomb, ice boomerang, sword, Herobrine. Q cycles every item; B cycles building blocks. Scroll the hotbar to reach bow, mining, and blocks.
+- 1–9: Obliterator, staff, portal, dragon egg, Herobrine axe, gun, bomb, ice boomerang, sword. Q cycles every item; B cycles building blocks. Scroll the hotbar to reach Herobrine, bow, mining, and blocks.
 - F: toggle flight. Space / Shift: fly up / down.
 - Touch: drag the world to look, use the movement buttons and Use / Fire. Fly and Build have separate buttons.
 - / or Commands: enter a command. The command panel lists all supported examples. Coordinates are now **x y z**, with y increasing upward.
 
 The **magic staff** fires violet bolts for 30 damage. The **portal** creates a linked pair of gateways; walk into the violet doorway to travel between the meadow and the dragon realm, then through the other end to return. Placing a new portal replaces the previous pair and creates a clear landing platform.
 
-The **dragon spawn egg** summons a flying, winged dragon with exactly **6,666,666,666,666 HP**, shown in the boss display and preserved in saves. Equip the new items with `/give staff`, `/give portal`, and `/give dragon_spawn_egg`. `/summon dragon` also works.
+The **dragon spawn egg** summons a flying, winged dragon with exactly **5,555 HP**, shown in the boss display and preserved in saves. Equip the new items with `/give staff`, `/give portal`, and `/give dragon_spawn_egg`. `/summon dragon` also works.
+
+The **one-hit Obliterator** is available in slot **1** or with `/give obliterator`. Aim and fire to instantly defeat the creature hit, including a full-health dragon. Its pink beam reaches 35 blocks and stops at walls. It starts equipped in new worlds. Existing saved dragons are capped at 5,555 HP when loaded.
 
 Your previous weapons remain available: the Herobrine axe fires a white laser for exactly 99 damage, the gun deals 12, the bow 8, and the sword 6. Pigs have 10 HP and can be killed. Bombs have a 1.2-second fuse and deal 24 damage within 3 blocks; walls shield creatures and the blast preserves terrain. The ice boomerang deals 6 damage once per creature, freezes it for 3 seconds, and returns to you. All weapons have unlimited uses. Herobrine's reusable spawn item is still available.
 
