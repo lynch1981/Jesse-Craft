@@ -1,0 +1,53 @@
+'use strict';
+(function(){
+const {Game,DRAGON_HP,SIZE,HEIGHT}=BlockMeadow3D;
+let checks=0;
+function assert(value,message){if(!value)throw Error(message);checks++}
+function flat(){
+ const g=new Game();for(const r of g.realms){r.blocks.fill(0);for(let x=0;x<SIZE;x++)for(let z=0;z<SIZE;z++)r.blocks[z*SIZE+x]=3;r.entities=[]}
+ Object.assign(g.player,{x:20,y:1,z:20,yaw:0,pitch:0,vy:0});return g;
+}
+let g=new Game();
+assert(!g.occupied(g.player.x,g.player.y,g.player.z),'Spawn must be open');
+assert(g.item==='staff','Staff available immediately');
+g.select('dragon_spawn_egg');g.use();
+let dragon=g.world.entities.find(e=>e.type==='dragon');
+assert(dragon.hp===6666666666666&&dragon.maxHp===DRAGON_HP,'Exact dragon HP');
+assert(g.world.entities.length===3,'Dragon egg spawns a dragon');
+g.use();assert(g.world.entities.length===3,'Egg cooldown');
+g.command('/give dragen_spawn_egg');assert(g.item==='dragon_spawn_egg','Misspelling alias');
+g=flat();g.select('portal');g.use();
+assert(g.realms.every(r=>r.portals.length===1),'Portal creates linked ends');
+const p=g.world.portals[0];Object.assign(g.player,{x:p.x,y:p.y,z:p.z});g.update(.016);
+assert(g.realm===1,'Walk through portal changes realm');
+assert(!g.occupied(g.player.x,g.player.y,g.player.z),'Portal arrival is safe');
+g.update(.016);assert(g.realm===1,'Portal does not immediately bounce');
+g.portalCooldown=0;const back=g.world.portals[0];Object.assign(g.player,back);g.update(.016);assert(g.realm===0,'Return portal works');
+g.select('portal');g.cooldown=0;g.use();assert(g.realms.every(r=>r.portals.length===1),'Portal replacement stays linked');
+g=flat();g.select('herobrine_axe');dragon=g.spawn('dragon',20,1.6,13);g.use();
+assert(dragon.hp===DRAGON_HP-99,'White laser deals exactly 99 damage');
+g.use();assert(dragon.hp===DRAGON_HP-99,'Laser cooldown');
+g.set(20,2,17,3);g.cooldown=0;g.use();assert(dragon.hp===DRAGON_HP-99,'Walls stop laser');
+g.set(20,2,17,0);g.select('staff');g.cooldown=0;g.use();for(let i=0;i<25;i++)g.updateShots(.02);
+assert(dragon.hp===DRAGON_HP-129,'Staff deals 30 damage');
+g=flat();g.player.pitch=-.35;g.select('gun');g.spawn('pig',20,1,17);g.use();assert(g.world.entities.length===0,'Pigs can be killed');
+g=flat();g.select('ice_boomerang');const monster=g.spawn('herobrine',20,1.7,16);g.use();for(let i=0;i<15;i++)g.updateShots(.02);
+assert(monster.hp===34&&monster.frozen===3,'Boomerang damages and freezes');
+g.cooldown=0;g.use();assert(g.shots.length===1,'Only one boomerang at a time');
+for(let i=0;i<70;i++)g.updateShots(.02);assert(g.shots.length===0,'Boomerang returns');
+g=flat();g.select('bomb');g.use();assert(g.shots[0].kind==='bomb','Bomb throws');
+const bomb=g.shots[0];Object.assign(bomb,{x:20,y:2,z:16,vx:0,vy:0,vz:0,life:.01});const h=g.spawn('herobrine',20,1,16);g.updateShots(.02);assert(h.hp===16,'Bomb explosion damage');
+g=flat();g.select('staff');g.mode='spectator';g.use();assert(g.shots.length===0,'Spectator cannot attack');
+g=flat();g.select('staff');g.set(20,2,18,3);g.use();for(let i=0;i<10;i++)g.updateShots(.02);assert(g.shots.length===0,'Staff stops at walls');
+g=flat();g.select('hand');g.set(20,2,17,9);g.use();assert(g.get(20,2,17)===0&&g.inventory[9]===1,'Mining yields inventory');
+g.set(20,2,17,3);g.select('gold');g.use();assert(g.get(20,2,18)===9,'3D block placement');
+g=flat();g.update(.05,{w:true});assert(g.player.z<20,'W moves forward');
+g.player.yaw=Math.PI/2;const x=g.player.x;g.update(.05,{w:true});assert(g.player.x<x,'Movement follows camera heading');
+g.flying=true;const y=g.player.y;g.update(.05,{' ':true});assert(g.player.y>y,'Flight ascends');
+g=new Game();g.select('dragon_spawn_egg');g.use();g.cooldown=0;g.select('portal');g.use();g.select('herobrine_axe');
+const restored=new Game();restored.restore(g.snapshot());assert(restored.world.entities.find(e=>e.type==='dragon').hp===DRAGON_HP,'Save preserves huge HP');
+assert(restored.item==='herobrine_axe'&&restored.realms.every(r=>r.portals.length===1),'Save preserves equipment and portals');
+restored.command('/tp ~ ~3 ~');assert(restored.player.y===g.player.y+3,'3D relative teleport');
+let failed=false;try{restored.restore('{"version":1}')}catch{failed=true}assert(failed,'Bad saves are rejected');
+console.log('Passed '+checks+' 3D checks: movement, mining/building, staff, portal round trip, exact dragon HP, legacy weapons, pigs, cooldowns, wall blocking, freeze, and save/load.');
+})();

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Block Meadow 3D checks</title>
+<body style="background:#132631;color:#e9f8df;font:16px system-ui;padding:30px">
+<h1>3D simulation checks</h1><pre id="result" style="white-space:pre-wrap">Running…</pre>
+<script>
+const result=document.getElementById('result');
+const log=console.log;
+console.log=(...args)=>{result.textContent=args.join(' ');log(...args)};
+window.addEventListener('error',e=>{result.textContent='FAILED: '+e.message;result.style.color='#ffadad'});
+</script>
+<script src="world3d.js"></script><script src="check3d.js"></script>
+</body></html>
